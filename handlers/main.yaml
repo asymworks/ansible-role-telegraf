@@ -1,0 +1,5 @@
+---
+# Handlers for asymworks.telegraf
+
+- name: Asymworks Telegraf | Restart Telegraf Agent
+  ansible.builtin.service: name=telegraf state=restarted

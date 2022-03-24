@@ -1,0 +1,10 @@
+---
+# Alpine-Specific Tasks for asymworks.telegraf
+
+# Install Packages
+- name: Asymworks Telegraf (Alpine) | Install Packages
+  community.general.apk:
+    update_cache: true
+    state: present
+    name:
+      - telegraf

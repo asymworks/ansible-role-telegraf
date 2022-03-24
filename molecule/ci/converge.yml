@@ -1,0 +1,39 @@
+---
+- name: Converge
+  hosts: all
+  pre_tasks:
+    # Set a flag to skip chrony operations for Alpine since Github CI has major issues
+    # running them that I cannot replicate
+    - set_fact:
+        __molecule_ci: true
+
+    - include_role:
+        name: asymworks.baseline
+        tasks_from: pre-tasks.yaml
+
+    # Override the Alpine Diskless Mode fact since the docker container will
+    # not show a mount point for '/'
+    - when: ansible_facts['os_family']|lower == 'alpine'
+      set_fact:
+        alpine_diskless: false
+
+  tasks:
+    - name: "Include Baseline Variables"
+      include_role:
+        name: asymworks.baseline
+        public: true
+        tasks_from: vars-only.yaml
+
+    - name: "Include Telegraf"
+      include_role:
+        name: asymworks.telegraf
+
+  post_tasks:
+    - include_role:
+        name: asymworks.baseline
+        tasks_from: post-tasks.yaml
+
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    asset_name: molecule-container
+    asset_tag: c:molecule:01

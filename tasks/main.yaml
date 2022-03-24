@@ -1,0 +1,32 @@
+---
+# Main Entry Point for asymworks.telegraf
+
+# Run Distribution-Specific Setup Tasks
+- import_tasks: main-alpine.yaml
+  when: ansible_facts['os_family']|lower == 'alpine'
+
+- import_tasks: main-debian.yaml
+  when: ansible_facts['os_family']|lower == 'debian'
+
+# Setup Telegraf Metrics Agent
+- name: Asymworks Telegraf | Copy Telegraf Agent Configuration
+  ansible.builtin.template:
+    src: etc/telegraf.conf.j2
+    dest: "{{ telegraf_conf_path }}/telegraf.conf"
+    mode: '0644'
+  notify: Asymworks Telegraf | Restart Telegraf Agent
+
+- name: Asymworks Telegraf | Copy Telegraf Plugin Configuration
+  ansible.builtin.copy:
+    src: "etc/telegraf.conf.d/{{ item }}"
+    dest: "{{ telegraf_conf_d_path }}/{{ item }}"
+    mode: '0644'
+  with_list:
+    - '10-defaults.conf'
+  notify: Asymworks Telegraf | Restart Telegraf Agent
+
+- name: Asymworks Telegraf | Start Telegraf Agent
+  ansible.builtin.service:
+    name: telegraf
+    enabled: "{{ telegraf_enabled }}"
+    state: "{{ 'started' if telegraf_enabled else 'stopped' }}"
