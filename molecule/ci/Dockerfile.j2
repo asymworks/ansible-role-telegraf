@@ -20,12 +20,14 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && rm -Rf /usr/share/doc && rm -Rf /usr/share/man \
     && apt-get clean \
-    && mkdir /var/run/dbus && chown messagebus:messagebus /var/run/dbus
+    && mkdir /var/run/dbus && chown messagebus:messagebus /var/run/dbus \
+    && update-ca-certificates --fresh
 
 RUN rm -rf /lib/systemd/system/multi-user.target.wants/getty.target \
     && echo "ip6tables" > /etc/modules-load.d/iptables.conf
 
 VOLUME ["/sys/fs/cgroup"]
+ENV SSL_CERT_DIR=/etc/ssl/certs
 CMD ["/lib/systemd/systemd"]
 {% else %}
 RUN apt-get update \
@@ -35,11 +37,13 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && rm -Rf /usr/share/doc && rm -Rf /usr/share/man \
     && apt-get clean \
-    && mkdir /var/run/dbus && chown messagebus:messagebus /var/run/dbus
+    && mkdir /var/run/dbus && chown messagebus:messagebus /var/run/dbus \
+    && update-ca-certificates --fresh
 
 RUN rm -rf /lib/systemd/system/multi-user.target.wants/getty.target \
     && echo "ip6tables" > /etc/modules-load.d/iptables.conf
 
 VOLUME ["/sys/fs/cgroup"]
+ENV SSL_CERT_DIR=/etc/ssl/certs
 CMD ["/lib/systemd/systemd"]
 {% endif %}
