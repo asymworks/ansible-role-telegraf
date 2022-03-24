@@ -15,8 +15,8 @@ CMD ["/sbin/init"]
 {% elif item.image.split(':', 1)[0] in ['ubuntu'] %}
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-       dbus dbus-user-session gnupg python3 openssh-server \
-       sudo systemd systemd-sysv xdg-user-dirs \
+       ca-certificates dbus dbus-user-session gnupg python3 \
+       openssh-server sudo systemd systemd-sysv xdg-user-dirs \
     && rm -rf /var/lib/apt/lists/* \
     && rm -Rf /usr/share/doc && rm -Rf /usr/share/man \
     && apt-get clean \
@@ -30,8 +30,8 @@ CMD ["/lib/systemd/systemd"]
 {% else %}
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-       cgmanager dbus dbus-user-session gnupg python3 openssh-server \
-       sudo systemd systemd-sysv xdg-user-dirs \
+       ca-certificates cgmanager dbus dbus-user-session gnupg python3 \
+       openssh-server sudo systemd systemd-sysv xdg-user-dirs \
     && rm -rf /var/lib/apt/lists/* \
     && rm -Rf /usr/share/doc && rm -Rf /usr/share/man \
     && apt-get clean \
